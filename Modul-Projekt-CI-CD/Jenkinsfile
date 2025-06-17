@@ -1,0 +1,47 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/ZeitschMarcus92/Modul-Projekt-CI-CD.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('backend') {
+                    sh 'mvn clean install'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('backend') {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                dir('backend') {
+                    sh 'mvn deploy'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline abgeschlossen.'
+        }
+        success {
+            echo 'Build & Deploy erfolgreich.'
+        }
+        failure {
+            echo 'Build oder Deploy fehlgeschlagen.'
+        }
+    }
+}
